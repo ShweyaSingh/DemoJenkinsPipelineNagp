@@ -2,11 +2,11 @@ pipeline {
     agent any
 
     environment {
-        scannerHome = tool name : 'SonarScannerForMSBuild'
+        scannerHome = tool name : 'sonar_scanner_dotnet'
         registry = 'shweyasingh/sampleapi'
         properties = null
-        docker_port = null
-        username = 'shweyasingh'
+        docker_port = 7100
+        username = 'shweta03'
     }
 
     options {
@@ -18,10 +18,8 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
+                echo 'Code checkout step'
                 checkout scm
-                script {
-                    docker_port = 7100
-                }
             }
         }
 
@@ -35,8 +33,8 @@ pipeline {
         stage('Start SonarQube Analysis') {
             steps {
                 echo 'Start sonarqube analysis step'
-                withSonarQubeEnv('SonarQubeServer') {
-                    bat "${scannerHome}\\SonarScanner.MSBuild.exe begin /k:SampleAPI /n:SampleAPI /v:1.0"
+                withSonarQubeEnv('Test_Sonar') {
+                    bat "${ scannerHome }\\SonarScanner.MSBuild.exe begin /k:sonar-${username} /n:sonar-${username} /v:1.0"
                 }
             }
         }
@@ -71,7 +69,7 @@ pipeline {
         stage('Stop SonarQube Analysis') {
             steps {
                 echo 'Stop sonarqube analysis step'
-                withSonarQubeEnv('SonarQubeServer') {
+                withSonarQubeEnv('Test_Sonar') {
                     bat "${scannerHome}\\SonarScanner.MSBuild.exe end"
                 }
             }
@@ -81,16 +79,16 @@ pipeline {
             steps {
                 echo 'Docker image step'
                 bat 'dotnet publish -c Release'
-                bat "docker build -t i_${username}_sampleapi --no-cache -f Dockerfile ."
+                bat "docker build -t i-${username}-master --no-cache -f Dockerfile ."
             }
         }
 
         stage('Push Docker Image') {
             steps {
                 echo 'Push docker image to docker hub step'
-                bat "docker tag i_${username}_sampleapi ${registry}:${BUILD_NUMBER}"
-                
-                withDockerRegistry([credentialsId: 'DockerHub', url: ""]) {
+                bat "docker tag i-${username}-master ${registry}:${BUILD_NUMBER}"
+
+                withDockerRegistry([credentialsId: 'DockerHub', url: '']) {
                     bat "docker push ${registry}:${BUILD_NUMBER}"
                 }
             }
@@ -100,7 +98,7 @@ pipeline {
             steps {
                 echo 'Docker deployment step'
                 // bat 'docker ps -q --filter "name=SampleAPI"| findstr . && docker stop SampleAPI && docker rm -fv SampleAPI'
-                bat "docker run --name SampleAPI -d -p 7100:80 ${registry}:${BUILD_NUMBER}"
+                bat "docker run --name c-${username}-master -d -p 7100:80 ${registry}:${BUILD_NUMBER}"
             }
         }
     }
