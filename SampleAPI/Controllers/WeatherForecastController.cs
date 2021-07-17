@@ -26,6 +26,7 @@ namespace SampleAPI.Controllers
         [HttpGet]
         public IEnumerable<WeatherForecast> GetWeatherForecastList()
         {
+            _logger.LogInformation("GetWeatherForecastList method called");
             var rng = new Random();
             return Enumerable.Range(1, 5).Select(index => new WeatherForecast
             {
@@ -34,6 +35,14 @@ namespace SampleAPI.Controllers
                 Summary = Summaries[rng.Next(Summaries.Length)]
             })
             .ToArray();
+        }
+
+        [Route("count")]
+        [HttpGet]
+        public int GetWeatherForecastCount()
+        {
+            _logger.LogInformation("GetWeatherForecastCount method called");
+            return Summaries.Length;
         }
     }
 }

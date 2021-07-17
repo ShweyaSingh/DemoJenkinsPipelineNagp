@@ -1,3 +1,3 @@
-# Sample Web api project with MSTest.
+# Demo Application For Jenkins Pipeline NAGP
 
-API returning fixed data not from db.
+Created WebAPI, returning static data and used MSTest for unit testing.
