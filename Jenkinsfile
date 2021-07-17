@@ -6,6 +6,7 @@ pipeline {
         registry = 'shweyasingh/sampleapi'
         docker_port = 7100
         username = 'shweta03'
+        container_id = "${bat(script:'docker ps -q --filter name=c-shweta03-master', returnStdout: true).trim().readLines().drop(1).join("")}"
     }
 
     options {
@@ -97,15 +98,12 @@ pipeline {
             steps {
                 echo 'Docker deployment step'
                 script {
-                    try {
+                    if (env.container_id != null) {
                         echo 'Stop and remove existing container'
                         bat "docker stop c-${username}-master && docker rm c-${username}-master"
                     }
-                    catch (exc) {
-                        echo 'No container exist to stop & remove'
-                    }
+                    bat "docker run --name c-${username}-master -d -p ${docker_port}:80 ${registry}:${BUILD_NUMBER}"
                 }
-                bat "docker run --name c-${username}-master -d -p ${docker_port}:80 ${registry}:${BUILD_NUMBER}"
             }
         }
     }
