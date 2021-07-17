@@ -4,7 +4,6 @@ pipeline {
     environment {
         scannerHome = tool name : 'sonar_scanner_dotnet'
         registry = 'shweyasingh/sampleapi'
-        properties = null
         docker_port = 7100
         username = 'shweta03'
     }
@@ -34,7 +33,7 @@ pipeline {
             steps {
                 echo 'Start sonarqube analysis step'
                 withSonarQubeEnv('Test_Sonar') {
-                    bat "${ scannerHome }\\SonarScanner.MSBuild.exe begin /k:sonar-${username} /n:sonar-${username} /v:1.0"
+                    bat "${scannerHome}\\SonarScanner.MSBuild.exe begin /k:sonar-${username} /n:sonar-${username} /v:1.0"
                 }
             }
         }
@@ -97,8 +96,16 @@ pipeline {
         stage('Docker Deployment') {
             steps {
                 echo 'Docker deployment step'
-                // bat 'docker ps -q --filter "name=SampleAPI"| findstr . && docker stop SampleAPI && docker rm -fv SampleAPI'
-                bat "docker run --name c-${username}-master -d -p 7100:80 ${registry}:${BUILD_NUMBER}"
+                script {
+                    try {
+                        echo 'Stop and remove existing container'
+                        bat "docker stop c-${username}-master && docker rm c-${username}-master"
+                    }
+                    catch (exc) {
+                        echo 'No container exist to stop & remove'
+                    }
+                }
+                bat "docker run --name c-${username}-master -d -p ${docker_port}:80 ${registry}:${BUILD_NUMBER}"
             }
         }
     }
