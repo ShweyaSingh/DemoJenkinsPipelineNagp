@@ -9,7 +9,7 @@ pipeline {
         container_id = "${bat(script:'docker ps -q --filter name=c-shweta03-master', returnStdout: true).trim().readLines().drop(1).join('')}"
         project_id = 'sampleapi-321108'
         cluster_name = 'sampleapi-cluster-1'
-        location = 'us-central1'
+        location = 'us-central1-c'
         credentials_id = 'GCP_SampleAPI'
     }
 
