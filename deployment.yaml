@@ -1,21 +1,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: sample-api-deployment
+  name: dotnet-api-deployment
   labels:
-    app: sample-api
+    app: dotnet-api
 spec:
   replicas: 3
   selector:
     matchLabels:
-      app: sample-api
+      app: dotnet-api
   template:
     metadata:
       labels:
-        app: sample-api
+        app: dotnet-api
     spec:
       containers:
-        - name: sample-api
+        - name: dotnet-api
           image: shweyasingh/sampleapi:latest
           ports:
             - name: http
@@ -25,11 +25,11 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: sample-api
+  name: dotnet-api
 spec:
   type: NodePort
   selector:
-    app: sample-api
+    app: dotnet-api
   ports:
     - protocol: TCP
       nodePort: 30158

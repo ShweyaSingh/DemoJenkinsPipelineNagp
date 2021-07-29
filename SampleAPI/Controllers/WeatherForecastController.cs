@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace SampleAPI.Controllers
 {
     [ApiController]
-    [Route("")]
+    [Route("api")]
     public class WeatherForecastController : ControllerBase
     {
         private static readonly string[] Summaries = new[]
@@ -23,6 +23,7 @@ namespace SampleAPI.Controllers
             _logger = logger;
         }
 
+        [Route("weather")]
         [HttpGet]
         public IEnumerable<WeatherForecast> GetWeatherForecastList()
         {
