@@ -7,7 +7,7 @@ pipeline {
         docker_port = 7200
         username = 'shweta03'
         project_id = 'sampleapi-321108'
-        cluster_name = 'sampleapi-cluster-1'
+        cluster_name = 'dotnet-api'
         location = 'us-central1-c'
         credentials_id = 'GCP_SampleAPI'
         container_id = "${bat(script:'docker ps -q --filter name=c-shweta03-master', returnStdout: true).trim().readLines().drop(1).join('')}"
