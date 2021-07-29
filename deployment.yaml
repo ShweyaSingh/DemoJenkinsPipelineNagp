@@ -32,6 +32,6 @@ spec:
     app: dotnet-api
   ports:
     - protocol: TCP
-      nodePort: 30158
+      nodePort: 7400
       port: 80
       targetPort: 80
